@@ -1,0 +1,222 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { DataGrid } from '@mui/x-data-grid';
+import { Button, TableContainer, Grid, IconButton, Box, Paper, Typography, Stack, TextField } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import MarkAsCompleteDialog from './create-new-match/MarkAsCompleteDialog';
+
+function RenderContent() {
+  const navigate = useNavigate();
+  const [isStatusDialog, setStatusDialog] = useState(false);
+  const [isError, setError] = useState(false);
+  const [isSuccess, setSuccess] = useState(false);
+  const [alertMsg, setAlertMsg] = useState('');
+  const [rowData, setRowData] = useState('');
+
+  function NoRowsOverlay() {
+    return (
+      <Stack height="100%" alignItems="center" mt={3}>
+        <SearchIcon />
+        <Typography>No data found</Typography>
+      </Stack>
+    );
+  }
+  const columns = [
+    { field: 'matchId', headerName: 'Match ID', headerAlign: 'center', align: 'center' },
+    { field: 'teamA', headerName: 'Team A', headerAlign: 'center', align: 'center' },
+    {
+      field: 'teamB',
+      headerName: 'Team B',
+      headerAlign: 'center',
+      align: 'center',
+    },
+    {
+      field: 'matchDate',
+      headerName: 'Match Date',
+      headerAlign: 'center',
+      align: 'center',
+      editable: true,
+    },
+    {
+      field: 'time',
+      headerName: 'Time',
+      editable: true,
+      headerAlign: 'center',
+      align: 'center',
+      width: 200,
+    },
+    {
+      field: 'venue',
+      headerName: 'Venue',
+      editable: true,
+      headerAlign: 'center',
+      align: 'center',
+      width: 110,
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      headerAlign: 'center',
+      align: 'center',
+      width: 120,
+    },
+    {
+      field: 'action',
+      headerName: 'Actions',
+      headerAlign: 'center',
+      align: 'center',
+      width: 250,
+      renderCell: (props) => {
+        if (props.row.status === 'Scheduled') {
+          return (
+            <>
+              <Grid style={{ width: '105%', display: 'flex', justifyContent: 'space-between' }}>
+                <Grid>
+                  <IconButton>
+                    <EditIcon
+                      onClick={() => {
+                        navigate(`/dashboard/matches/create-new-match/EditMatch`);
+                      }}
+                    />
+                  </IconButton>
+                  <IconButton>
+                    <DeleteOutlineIcon style={{ color: 'red' }} />
+                  </IconButton>
+                </Grid>
+                <Grid>
+                  <Button
+                    variant="contained"
+                    style={{ width: 'auto' }}
+                    onClick={() => {
+                      setStatusDialog(true);
+                    }}
+                  >
+                    Complete/Abandon
+                  </Button>
+                </Grid>
+              </Grid>
+            </>
+          );
+        }
+      },
+    },
+  ];
+
+  const rows = [
+    {
+      id: 1,
+      matchId: 'MC001',
+      teamA: 'RCB',
+      teamB: 'CSK',
+      matchDate: '01-sep-2021',
+      time: '19:30 IST (GMT+5.5)',
+      venue: 'LB STADIUM',
+      status: 'Scheduled',
+    },
+    {
+      id: 2,
+      matchId: 'MC002',
+      teamA: 'RCB',
+      teamB: 'CSK',
+      matchDate: '02-sep-2021',
+      time: '19:30 IST (GMT+5.5)',
+      venue: 'LB STADIUM',
+      status: 'Scheduled',
+    },
+    {
+      id: 3,
+      matchId: 'MC003',
+      teamA: 'RCB',
+      teamB: 'CSK',
+      matchDate: '03-sep-2021',
+      time: '19:30 IST (GMT+5.5)',
+      venue: 'LB STADIUM',
+      status: 'Abandoned',
+    },
+    {
+      id: 4,
+      matchId: 'MC004',
+      teamA: 'RCB',
+      teamB: 'CSK',
+      matchDate: '04-sep-2021',
+      time: '19:30 IST (GMT+5.5)',
+      venue: 'LB STADIUM',
+      status: 'Completed',
+    },
+
+    {
+      id: 5,
+      matchId: 'MC005',
+      teamA: 'RCB',
+      teamB: 'CSK',
+      matchDate: '05-sep-2021',
+      time: '19:30 IST (GMT+5.5)',
+      venue: 'LB STADIUM',
+      status: 'Completed',
+    },
+    {
+      id: 6,
+      matchId: 'MC006',
+      teamA: 'RCB',
+      teamB: 'CSK',
+      matchDate: '06-sep-2021',
+      time: '19:30 IST (GMT+5.5)',
+      venue: 'LB STADIUM',
+      status: 'Scheduled',
+    },
+    {
+      id: 7,
+      matchId: 'MC007',
+      teamA: 'RCB',
+      teamB: 'CSK',
+      matchDate: '07-sep-2021',
+      time: '19:30 IST (GMT+5.5)',
+      venue: 'LB STADIUM',
+      status: 'Completed',
+    },
+  ];
+  return (
+    <>
+      <Grid style={{ marginTop: '3%' }}>
+        <div
+          style={{
+            height: 600,
+            width: '100%',
+            border: '1px solid white',
+            boxShadow: '1px 1px 5px black',
+            overflowY: 'hidden',
+            padding: '10px 20px',
+          }}
+        >
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            experimentalFeatures={{ newEditingApi: true }}
+            sx={{
+              '.MuiDataGrid-columnSeparator': {
+                display: 'none',
+              },
+              '&.MuiDataGrid-root': {
+                border: 'none',
+              },
+            }}
+            components={{ NoRowsOverlay }}
+          />
+        </div>
+      </Grid>
+      {isStatusDialog && (
+        <MarkAsCompleteDialog
+          isOpen={isStatusDialog}
+          setOpen={setStatusDialog}
+          data={rowData}
+          setSuccess={setSuccess}
+          setError={setError}
+          setAlertMsg={setAlertMsg}
+        />
+      )}
+    </>
+  );
+}
+export default RenderContent;
