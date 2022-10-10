@@ -1,0 +1,126 @@
+import React, { useState, Fragment } from 'react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { makeStyles } from '@mui/styles';
+import { Button, TableContainer, Grid, IconButton, Box, Paper, Typography, Stack, TextField } from '@mui/material';
+import * as yup from 'yup';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { yupResolver } from '@hookform/resolvers/yup';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import FormControl from '@mui/material/FormControl';
+import { DataGrid } from '@mui/x-data-grid';
+import Select from '@mui/material/Select';
+import { Container } from '@mui/system';
+import { FormProvider, RHFTextField, RHFAutocomplete, RHFSelect } from '../../../components/hook-form';
+import RenderContent from './RederContent';
+
+const useStyles = makeStyles((theme) => ({
+  headerSection: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    alignItems: 'center',
+  },
+  createMatches: {
+    display: 'flex',
+  },
+  leftSideSection: {
+    width: '50%',
+  },
+  rightSideSection: {
+    width: '50%',
+    display: 'flex',
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+  },
+  selectTournament: {
+    width: '50%',
+  },
+  createTournament: {
+    display: 'flex',
+  },
+
+  tableDataGrid: {
+    height: 600,
+  },
+  tableContainer: {
+    height: 700,
+    width: '100%',
+    border: '1px solid white',
+    boxShadow: '1px 1px 5px black',
+    overflowY: 'hidden',
+    padding: '10px 20px',
+  },
+  tableSpqHeading: {
+    fontSize: '13px',
+    textAlign: 'center',
+    marginTop: '2px',
+  },
+  headerMainGrid: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+}));
+
+const tourment = ['IPL', 'T20', 'ONE DAY'];
+
+export default function ChangeOrderDetails() {
+  const navigate = useNavigate();
+  const classes = useStyles();
+  const [matchTable, setMatchTable] = useState(false);
+
+  const handleTournment = () => {
+    setMatchTable(true);
+  };
+  const handleCreateMatch = () => {
+    navigate(`/dashboard/matches/create-new-match/CreateNewMatch`);
+  };
+  const handleImportCsvI = () => {
+    navigate(`/dashboard/matches/CsvImportTable`);
+  };
+
+  return (
+    <Container maxWidth="xl">
+      <Typography xs display="flex" alignItems="center" marginBottom={5}>
+        Home
+        <ChevronRightIcon />
+        Matches
+      </Typography>
+      <Grid className={classes.headerSection}>
+        <Grid variant="div" className={classes.leftSideSection}>
+          <Grid className={classes.selectTournament} md={3}>
+            <Typography sx={{ fontWeight: 'bold', marginBottom: '7px' }}>Select Tournament</Typography>
+            <Select name="country" style={{ width: '100%' }}>
+              {tourment?.map((item, index) => (
+                <MenuItem key={index} value={item} onClick={handleTournment}>
+                  {item}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+        </Grid>
+        <Grid variant="div" className={classes.rightSideSection}>
+          <Grid className={classes.createTournament}>
+            <Typography>
+              <Button variant="contained" style={{ width: 'auto' }} onClick={handleCreateMatch}>
+                Create Matches
+              </Button>
+            </Typography>
+            <Typography style={{ margin: '10px' }} />
+            <Typography>
+              <Button variant="contained" style={{ width: 'auto' }} onClick={handleImportCsvI}>
+                Import CSV file
+              </Button>
+            </Typography>
+          </Grid>
+        </Grid>
+      </Grid>
+      <div>{matchTable && <RenderContent />}</div>
+
+   
+    </Container>
+  );
+}
